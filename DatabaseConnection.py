@@ -3,7 +3,7 @@
 from pymongo import MongoClient
 import datetime
 
-#Intenção: Desacoplar o acesso ao banco de dados da aplicação
+#Intenção: Desacoplar o acesso ao banco de dados da classe Coletor
 
 class MongoDB:
     def __init__(self,host,port):
