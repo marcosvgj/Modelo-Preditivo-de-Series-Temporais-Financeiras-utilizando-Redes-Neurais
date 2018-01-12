@@ -1,4 +1,13 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+
+## Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais
+
+* Projeto que tem como objetivo a construção de um sistema capaz de realizar transações no Mercado Financeiro, especialmente no Mercado Bit Coin que, utiliza do Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais Artificiais.
+
+# Table of contents
+* Introdução
+* Requerimentos 
+* Módulos
+* Configuração 
 
 When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
 
@@ -13,7 +22,7 @@ You’ll start by editing this README file to learn how to edit a file in Bitbuc
 1. Click **Source** on the left side.
 2. Click the README.md link from the list of files.
 3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
+4. Delete the following text: 
 5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
 6. Go back to the **Source** page.
 
