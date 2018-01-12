@@ -1,18 +1,13 @@
 
-<p><font size = 4><b><center>Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais</center></b></font></p>
+## Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais
 
-<p>Projeto que tem como objetivo a construção de um sistema capaz de realizar transações no Mercado Financeiro, especialmente no Mercado Bit Coin que, utiliza do Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais Artificiais.
+* Projeto que tem como objetivo a construção de um sistema capaz de realizar transações no Mercado Financeiro, especialmente no Mercado Bit Coin que, utiliza do Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais Artificiais.
 
-
-
-<b>Table of contents</b>
-* <b>Introdução </font>
-* <b>Requerimentos </font>
-* <b>Módulos </font> 
-* <b>Configuração </font>
-
-
-
+# Table of contents
+* Introdução
+* Requerimentos 
+* Módulos
+* Configuração 
 
 When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
 
