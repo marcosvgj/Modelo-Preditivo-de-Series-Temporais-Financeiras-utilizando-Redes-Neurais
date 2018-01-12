@@ -8,19 +8,52 @@ import requests
 import schedule
 import time
 import pandas as pd
+import abc
 
 
 class Request(Thread):
+    __metaclass__ = abc.ABCMeta
 
-    def __init__(self,coin):
+    @abc.abstractmethod
+    def requestData(self):
+        "Assinatura da função que realiza a requisição de dados"
+
+
+
+class RequestMercadoBitCoin(Request):
+
+    def __init__(self, coin):
         self.coin = coin
-        self.source = "https://www.mercadobitcoin.net/api/"+self.coin+"/ticker/"
+        self.source = "https://www.mercadobitcoin.net/api/" + self.coin + "/ticker/"
         self.data = {}
+        self.market = "Mercado Bit Coin"
 
     def requestData(self):
         try:
             requisition = requests.get(self.source)
             self.data[self.coin] = json.loads(requisition.text)['ticker']
+
+        except requests.exceptions.ConnectionError:
+
+            print("<Erro na requisição dos dados - Possível Erro: Numero maximo de tentativas excedido>")
+
+        except requests.exceptions.Timeout:
+
+            print("<Erro na requisição dos dados - Possível Erro: Tempo maximo de requisicao excedido>")
+
+class RequestNegocieCoins(Request):
+
+    def __init__(self, coin):
+        self.coin = coin
+        self.source = "https://broker.negociecoins.com.br/api/v3/"+ self.coin +"/ticker"
+        self.data = {}
+        self.market = "Negocie Coins"
+
+    def requestData(self):
+        try:
+            requisition = requests.get(self.source)
+            self.data[self.coin] = json.loads(requisition.text)
+
 
         except requests.exceptions.ConnectionError:
 
@@ -47,7 +80,8 @@ class Coletor:
         self.UTC_OFFSET = 2
 
     def requisitarDados(self):
-         iterator  = [Request(item) for item in self.cryptocurrencies]
+        " Parametrizar a escolha do mercado "
+         iterator  = [RequestMercadoBitCoin(item) for item in self.cryptocurrencies]
          current_time = (datetime.datetime.utcnow() - datetime.timedelta(hours=self.UTC_OFFSET)).strftime('%Y-%m-%d %H:%M')
          tickers = []
 
@@ -55,7 +89,7 @@ class Coletor:
             item.requestData()
             tickers.append(item.data)
 
-         self.data.update({current_time:tickers})
+         self.data.update({current_time:tickers, "market" :item.market})
 
          print(json.dumps(self.data, indent=4, sort_keys=True))
 
@@ -111,7 +145,7 @@ def Scraping():
 if __name__ == '__main__':
 
     a = Coletor()
-    a.recuperarDados()
+    a.requisitarDados()
 
 
 
