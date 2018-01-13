@@ -55,7 +55,13 @@ class MongoDB:
 
         else:
             if coin is None:
-                """ Retornar todas as informações sobre todas as cryptomoedas do mercado selecionado"""
+
+                "Retornar todas as informações sobre todas as cryptomoedas do mercado selecionado"
+
+                cursor = self.session['SmartCoinDB'].get_collection(market)
+
+                for items in cursor.find({}):
+                    print(items)
 
             else:
                 """ Retornar todas as informações sobre a cryptomoeda selecionada do mercado selecionado"""
