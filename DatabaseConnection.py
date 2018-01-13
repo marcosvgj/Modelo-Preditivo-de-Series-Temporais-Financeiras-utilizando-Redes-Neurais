@@ -44,7 +44,7 @@ class MongoDB:
             if coin is None:
                 col = self.session['SmartCoinDB'].collection_names()
 
-                """ Retornar todos os dados de todas as coleções"""
+                " Retornar todos os dados de todas as coleções"
                 for item in col:
                     cursor = self.session['SmartCoinDB'].get_collection(item)
                     for items in cursor.find({}):
@@ -60,5 +60,6 @@ class MongoDB:
             else:
                 """ Retornar todas as informações sobre a cryptomoeda selecionada do mercado selecionado"""
 
-    def limpar_collections(self):
-        "Dropa todo conteúdo referente a uma collection "
+    def limpar_collections(self, collection):
+        """Dropa todo conteúdo referente a uma collection"""
+        self.session['SmartCoinDB'].get_collection(collection).drop()
