@@ -2,6 +2,7 @@
 
 from pymongo import errors, MongoClient
 
+
 # Intenção: Desacoplar o acesso ao banco de dados da classe Coletor
 
 class MongoDB:
@@ -29,11 +30,26 @@ class MongoDB:
 
     def armazenar_dados(self, coletor):
 
-        db = self.session['SmartCoinDB'].get_collection(coletor.RequestType.market)
+        db = self.session['SmartCoinDB'].get_collection(coletor.request_type.market)
 
         try:
             db.insert_one(coletor.data)
-            print("Data was successfully inserted in the follow Colletion: %s " % coletor.RequestType.market)
+            print("Data was successfully inserted in the follow Colletion: %s " % coletor.request_type.market)
 
         except errors.OperationFailure as error:
             print("Could not apply the operation %s" % error)
+
+    def consultar(self, market=None, coin=None):
+        if market is None:
+            if coin is None:
+                self.session['SmartCoinDB'].collection_names()
+
+                """ Retornar todos os dados de todas as coleções"""
+            else:
+                """ Retornar as informações sobre a cryptomoeda selecionada de todos os mercados"""
+        else:
+            if coin is None:
+                """ Retornar todas as informações sobre todas as cryptomoedas do mercado selecionado"""
+
+            else:
+                """ Retornar todas as informações sobre a cryptomoeda selecionada do mercado selecionado"""
