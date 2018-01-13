@@ -42,14 +42,23 @@ class MongoDB:
     def consultar(self, market=None, coin=None):
         if market is None:
             if coin is None:
-                self.session['SmartCoinDB'].collection_names()
+                col = self.session['SmartCoinDB'].collection_names()
 
                 """ Retornar todos os dados de todas as coleções"""
+                for item in col:
+                    cursor = self.session['SmartCoinDB'].get_collection(item)
+                    for items in cursor.find({}):
+                        print(items)
+
             else:
                 """ Retornar as informações sobre a cryptomoeda selecionada de todos os mercados"""
+
         else:
             if coin is None:
                 """ Retornar todas as informações sobre todas as cryptomoedas do mercado selecionado"""
 
             else:
                 """ Retornar todas as informações sobre a cryptomoeda selecionada do mercado selecionado"""
+
+    def limpar_collections(self):
+        "Dropa todo conteúdo referente a uma collection "
