@@ -125,11 +125,11 @@ def job_for_all_markets(db_connection):
         db_connection.armazenar_dados(requisition)
 
 
-def job_for_only_market(db_connection):
+def job_for_only_market(db_connection, market_request):
 
     """ Facade """
 
-    requisition = Coletor(RequestMercadoBitcoin)
+    requisition = Coletor(market_request)
     requisition.requisitar_dados()
     db_connection.armazenar_dados(requisition)
 
@@ -140,7 +140,7 @@ if __name__ == '__main__':
     db_conn.iniciar_sessao()
 
     bot = Scraping()
-    bot.engine(partial(job_for_only_market, db_conn))
+    bot.engine(partial(job_for_only_market, db_conn, RequestMercadoBitcoin))
 
 
 
