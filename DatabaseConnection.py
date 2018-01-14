@@ -79,6 +79,8 @@ class MongoDB:
                 switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
 
                 for items in cursor.find({}):
+                    """Numpy Array Format ->  ['high', 'low', 'vol', 'last', 'buy', 'sell', 'date'] """
+                    # print(list(items['info'][switcher[coin]]['ticker']))
                     print(items['info'][switcher[coin]])
 
     def limpar_collections(self, collection):
