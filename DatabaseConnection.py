@@ -52,7 +52,15 @@ class MongoDB:
 
             else:
                 """ Retornar as informações sobre a cryptomoeda selecionada de todos os mercados"""
+                col = self.session['SmartCoinDB'].collection_names()
 
+                switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
+
+                for item in col:
+                    cursor = self.session['SmartCoinDB'].get_collection(item)
+
+                    for items in cursor.find({}):
+                        print(items['info'][switcher[coin]])
         else:
             if coin is None:
 
@@ -65,6 +73,13 @@ class MongoDB:
 
             else:
                 """ Retornar todas as informações sobre a cryptomoeda selecionada do mercado selecionado"""
+
+                cursor = self.session['SmartCoinDB'].get_collection(market)
+
+                switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
+
+                for items in cursor.find({}):
+                    print(items['info'][switcher[coin]])
 
     def limpar_collections(self, collection):
         """Dropa todo conteúdo referente a uma collection"""
