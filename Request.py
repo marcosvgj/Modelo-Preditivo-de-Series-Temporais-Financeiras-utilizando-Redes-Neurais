@@ -1,163 +1,143 @@
-#Importação das bibliotecas necessárias
+"""Importação das bibliotecas necessárias"""
 
-import datetime
+from datetime import timedelta
+from datetime import datetime
 import json
 from threading import Thread
-from pymongo import MongoClient
 import requests
 import schedule
-import time
-import pandas as pd
+from time import sleep
 import abc
+from DatabaseConnection import MongoDB
+from functools import partial
 
 
 class Request(Thread):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def requestData(self):
-        "Assinatura da função que realiza a requisição de dados"
+    def request_data(self):
+        """Assinatura da função que realiza a requisição de dados"""
 
 
-
-class RequestMercadoBitCoin(Request):
+class RequestMercadoBitcoin(Request):
+    market = "Mercado Bit Coin"
 
     def __init__(self, coin):
+
+        super().__init__()
+
         self.coin = coin
         self.source = "https://www.mercadobitcoin.net/api/" + self.coin + "/ticker/"
         self.data = {}
-        self.market = "Mercado Bit Coin"
 
-    def requestData(self):
+    def request_data(self):
+
         try:
             requisition = requests.get(self.source)
-            self.data[self.coin] = json.loads(requisition.text)['ticker']
+            self.data.update(json.loads(requisition.text))
+            self.data.update({"coin": self.coin})
 
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as error:
 
-            print("<Erro na requisição dos dados - Possível Erro: Numero maximo de tentativas excedido>")
+            print("<Erro na requisição dos dados: %s" % error)
 
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout as error:
 
-            print("<Erro na requisição dos dados - Possível Erro: Tempo maximo de requisicao excedido>")
+            print("<Erro na requisição dos dados> : %s " % error)
+
 
 class RequestNegocieCoins(Request):
 
-    def __init__(self, coin):
-        self.coin = coin
-        self.source = "https://broker.negociecoins.com.br/api/v3/"+ self.coin +"/ticker"
-        self.data = {}
-        self.market = "Negocie Coins"
+    market = "Negocie Coins"
 
-    def requestData(self):
+    def __init__(self, coin):
+
+        super().__init__()
+
+        self.coin = coin
+        self.source = "https://broker.negociecoins.com.br/api/v3/" + self.coin + "/ticker"
+        self.data = {}
+
+    def request_data(self):
+
         try:
             requisition = requests.get(self.source)
-            self.data[self.coin] = json.loads(requisition.text)
+            self.data.update({"ticker": json.loads(requisition.text)})
+            self.data.update({"coin": self.coin})
 
+        except requests.exceptions.ConnectionError as error:
 
-        except requests.exceptions.ConnectionError:
+            print("<Erro na requisição dos dados> : %s " % error)
 
-            print("<Erro na requisição dos dados - Possível Erro: Numero maximo de tentativas excedido>")
+        except requests.exceptions.Timeout as error:
 
-        except requests.exceptions.Timeout:
-
-            print("<Erro na requisição dos dados - Possível Erro: Tempo maximo de requisicao excedido>")
+            print("<Erro na requisição dos dados> : %s" % error)
 
 
 class Coletor:
+    cryptocurrencies = ['BTC', 'LTC', 'BCH']
+
+    def __init__(self, request_type):
+        self.data = {}
+        self.utc_offset = 2
+        self.request_type = request_type
+
+    def requisitar_dados(self):
+        iterator = [self.request_type(item) for item in self.cryptocurrencies]
+        current_time = (datetime.utcnow() - timedelta(hours=self.utc_offset)).strftime(
+            '%Y-%m-%d %H:%M')
+        tickers = []
+
+        for item in iterator:
+
+            Thread(target=item.request_data()).start()
+            tickers.append(item.data)
+            self.data.update({"timestamp": current_time, "info": tickers, "market": item.market})
+
+        print(json.dumps(self.data, indent=4, sort_keys=True))
+
+
+class Scraping:
 
     def __init__(self):
+        """ Coleta automatizada dos dados """
+        print("Starting Scraping job ...")
 
-        """ Moedas utilizadas:
-            - BTC - BitCoin
-            - LTC - LiteCoin
-            - BCH - BitCoin Cash
-        """
+    def run_gear(self, job):
+        schedule.every(1).minute.do(job)
+        while True:
+            schedule.run_pending()
+            sleep(5)
 
-        self.cryptocurrencies = ['BTC','LTC','BCH']
-        self.data = {}
-        self.Session = MongoClient('localhost', 27017)
-        self.UTC_OFFSET = 2
 
-    def requisitarDados(self):
-        " Parametrizar a escolha do mercado "
-         iterator  = [RequestMercadoBitCoin(item) for item in self.cryptocurrencies]
-         current_time = (datetime.datetime.utcnow() - datetime.timedelta(hours=self.UTC_OFFSET)).strftime('%Y-%m-%d %H:%M')
-         tickers = []
+def job_for_all_markets(db_connection):
 
-         for item in iterator:
-            item.requestData()
-            tickers.append(item.data)
+    """ Facade
+        Ressalva: Inicializar ambiente multi-thread para coleta em diferentes mercados"""
 
-         self.data.update({current_time:tickers, "market" :item.market})
+    market_requests = Request.__subclasses__()
 
-         print(json.dumps(self.data, indent=4, sort_keys=True))
+    for item in market_requests:
 
-    def armazenarDados(self):
-        "Otimizar através do Mediator"
-        db = self.Session['SmartCoinDB'].get_collection('SmartCoin')
-        db.insert_one(self.data)
-        self.Session.close()
+        requisition = Coletor(item)
+        requisition.requisitar_dados()
+        db_connection.armazenar_dados(requisition)
 
-    def recuperarDados(self):
 
-        try:
-            db = self.Session['SmartCoinDB'].get_collection('SmartCoin').find()
-            print ('\n \f Objetos da coleção - SmartCoin \n \f Frequência de atualização dos dados: 1 minuto \n ')
+def job_for_only_market(db_connection, market_request):
 
-            for emp in db:
-                item = emp[list(emp.keys())[1]]
+    """ Facade """
 
-                print(list(emp.keys())[1] + ":" + json.dumps(item, indent=4, sort_keys=True))
-                print('\n')
-        except:
-            print("Tempo excedido - Tente novamente mais tarde")
+    requisition = Coletor(market_request)
+    requisition.requisitar_dados()
+    db_connection.armazenar_dados(requisition)
 
-    def build_in_memory_database(self):
-        """Criação do Database para treinamento em batch do modelo"""
-        db_pandas_list = []
-        db = self.Session['SmartCoinDB'].get_collection('SmartCoin').find()
-        for emp in db:
-            horario = emp['BTC']['BTC']['ticker']['date']
-            #print("Horário: %s " % datetime.datetime.fromtimestamp(int(horario)).strftime('%Y-%m-%d %H:%M'))
-            #print("Horario - ENDED REQUEST :  %s" % emp['BTC']['timestamp'])
-
-            for item in self.Cryptocurrencies:
-                #print(emp[item][item]['ticker'])
-                db_pandas_list.append(emp[item][item]['ticker'])
-            #print('\n')
-
-        return pd.DataFrame(db_pandas_list)
-
-def Job():
-
-    "Inicio do PyMongoDB"
-    obj = Coletor()
-    obj.requisitarDados()
-    obj.armazenarDados()
-
-def Scraping():
-    schedule.every(1).minute.do(Job)
-    while True:
-       schedule.run_pending()
-       time.sleep(5)
 
 if __name__ == '__main__':
+    """ Scraping() """
+    db_conn = MongoDB()
+    db_conn.iniciar_sessao()
 
-    a = Coletor()
-    a.requisitarDados()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    bot = Scraping()
+    bot.run_gear(partial(job_for_all_markets, db_conn))
