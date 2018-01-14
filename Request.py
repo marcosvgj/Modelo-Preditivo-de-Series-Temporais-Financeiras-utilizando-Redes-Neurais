@@ -36,7 +36,7 @@ class RequestMercadoBitcoin(Request):
         try:
             requisition = requests.get(self.source)
             self.data.update(json.loads(requisition.text))
-            self.data.update({"coin":self.coin})
+            self.data.update({"coin": self.coin})
 
         except requests.exceptions.ConnectionError as error:
 
@@ -63,7 +63,7 @@ class RequestNegocieCoins(Request):
 
         try:
             requisition = requests.get(self.source)
-            self.data.update({"ticker":json.loads(requisition.text)})
+            self.data.update({"ticker": json.loads(requisition.text)})
             self.data.update({"coin": self.coin})
 
         except requests.exceptions.ConnectionError as error:
@@ -93,7 +93,7 @@ class Coletor:
 
             Thread(target=item.request_data()).start()
             tickers.append(item.data)
-            self.data.update({current_time: tickers, "market": item.market})
+            self.data.update({"timestamp": current_time, "info": tickers, "market": item.market})
 
         print(json.dumps(self.data, indent=4, sort_keys=True))
 
@@ -104,7 +104,7 @@ class Scraping:
         """ Coleta automatizada dos dados """
         print("Starting Scraping job ...")
 
-    def engine(self,job):
+    def run_gear(self, job):
         schedule.every(1).minute.do(job)
         while True:
             schedule.run_pending()
@@ -140,13 +140,4 @@ if __name__ == '__main__':
     db_conn.iniciar_sessao()
 
     bot = Scraping()
-    bot.engine(partial(job_for_only_market, db_conn, RequestMercadoBitcoin))
-
-
-
-
-
-
-
-
-
+    bot.run_gear(partial(job_for_all_markets, db_conn))
