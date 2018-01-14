@@ -35,7 +35,8 @@ class RequestMercadoBitcoin(Request):
 
         try:
             requisition = requests.get(self.source)
-            self.data[self.coin] = json.loads(requisition.text)['ticker']
+            self.data.update(json.loads(requisition.text))
+            self.data.update({"coin":self.coin})
 
         except requests.exceptions.ConnectionError as error:
 
@@ -62,7 +63,8 @@ class RequestNegocieCoins(Request):
 
         try:
             requisition = requests.get(self.source)
-            self.data[self.coin] = json.loads(requisition.text)
+            self.data.update({"ticker":json.loads(requisition.text)})
+            self.data.update({"coin": self.coin})
 
         except requests.exceptions.ConnectionError as error:
 
@@ -133,9 +135,18 @@ def job_for_only_market(db_connection):
 
 
 if __name__ == '__main__':
-
+    """ Scraping() """
     db_conn = MongoDB()
     db_conn.iniciar_sessao()
 
     bot = Scraping()
-    bot.engine(partial(job_for_all_markets, db_conn))
+    bot.engine(partial(job_for_only_market, db_conn))
+
+
+
+
+
+
+
+
+
