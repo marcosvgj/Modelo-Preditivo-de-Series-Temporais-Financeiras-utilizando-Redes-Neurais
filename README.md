@@ -12,8 +12,10 @@
 # Introdução
 
 ## Implementação do Scraping(): 
-* Na etapa atual, é realizado uma classe Scraping no qual faz uso dos dados real-time de diversos mercados, com a finalidade de
-realizar o que é chamado atualmente no mercado de arbitragem. 
+* Na etapa atual, é realizado uma classe Scraping no qual faz uso dos dados real-time de diversos brokers, 
+que fornecem serviços para compra e venda de ativos financeiros e moedas virtuais como o Bitcoin. 
+O objetivo do Scraping() é coletar os dados minuto à minuto das corretoras para que se possa realizar o que é denominado na economia de arbitragem.  
+
 Referências: https://pt.wikipedia.org/wiki/Arbitragem_(economia)
 
 # Módulos 
