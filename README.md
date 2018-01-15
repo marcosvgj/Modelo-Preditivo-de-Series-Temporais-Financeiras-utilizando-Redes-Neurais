@@ -15,11 +15,10 @@ Data  | Status | Versão
 
 Data  | Versão 
 ------------- | -------------
-08/01/2018 | Scraping 1.1 
-* * *
-*Comentário*
+15/01/2018 | Scraping 1.1 
 
-Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
+*Comentário*
+* Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
 * * * 
 
 # Table of contents
