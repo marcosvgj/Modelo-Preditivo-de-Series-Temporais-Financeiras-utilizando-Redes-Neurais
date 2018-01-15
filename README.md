@@ -15,3 +15,17 @@
 * Na etapa atual, é realizado uma classe Scraping no qual faz uso dos dados real-time de diversos mercados, com a finalidade de
 realizar o que é chamado atualmente no mercado de arbitragem. 
 Referências: https://pt.wikipedia.org/wiki/Arbitragem_(economia)
+
+# Módulos 
+
+## Módulos necessários: 
+
+* Pymongo
+* JSON
+* Datetime
+* Thread 
+* Requests
+* Schedule 
+* time 
+* Abc ( Abstract Base Classes )
+* Functools
