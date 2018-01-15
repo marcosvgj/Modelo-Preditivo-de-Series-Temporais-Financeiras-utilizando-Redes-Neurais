@@ -1,21 +1,19 @@
 #!/usr/bin/python
 
 from pymongo import errors, MongoClient
+import json
 
 
 # Intenção: Desacoplar o acesso ao banco de dados da classe Coletor
 
 class MongoDB:
     def __init__(self, host=None, port=None):
-
         self.session = MongoClient()
-
         # Default Host
         if host is None:
             self.host = 'localhost'
         else:
             self.host = host
-
         # Default Port
         if port is None:
             self.port = 27017
@@ -29,59 +27,90 @@ class MongoDB:
         self.session.close()
 
     def armazenar_dados(self, coletor):
-
         db = self.session['SmartCoinDB'].get_collection(coletor.request_type.market)
-
         try:
             db.insert_one(coletor.data)
             print("Data was successfully inserted in the follow Colletion: %s " % coletor.request_type.market)
-
         except errors.OperationFailure as error:
             print("Could not apply the operation %s" % error)
 
-    def consultar(self, market=None, coin=None):
+    def consultar(self, market=None, coin=None, materialized_mode=False):
         if market is None:
             if coin is None:
                 col = self.session['SmartCoinDB'].collection_names()
-
-                " Retornar todos os dados de todas as coleções"
-                for item in col:
-                    cursor = self.session['SmartCoinDB'].get_collection(item)
-                    for items in cursor.find({}):
-                        print(items)
-
+                if materialized_mode is True:
+                    """ Retornar todos os dados de todas as coleções em uma lista"""
+                    tickers = []
+                    for item in col:
+                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        for items in cursor.find({}).sort('timestamp', 1):
+                            item = {"timestamp": items['timestamp'], 'info': items['info'], 'market': items['market']}
+                            tickers.append(item)
+                    return tickers
+                else:
+                    """ Imprime todos os dados de todas as coleções"""
+                    for item in col:
+                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        for items in cursor.find({}).sort('timestamp', 1):
+                            item = {"timestamp": items['timestamp'], 'info': items['info'], 'market': items['market']}
+                            print(json.dumps(item, indent=4, sort_keys=True))
             else:
-                """ Retornar as informações sobre a cryptomoeda selecionada de todos os mercados"""
+                """ Retornar as informações sobre a criptomoeda selecionada de todos os mercados"""
                 col = self.session['SmartCoinDB'].collection_names()
-
                 switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
-
-                for item in col:
-                    cursor = self.session['SmartCoinDB'].get_collection(item)
-
-                    for items in cursor.find({}):
-                        print(items['info'][switcher[coin]])
+                if materialized_mode is True:
+                    """ Retornar as informações sobre a criptomoeda selecionada de todos os mercados em uma lista"""
+                    tickers = []
+                    for item in col:
+                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        for items in cursor.find({}).sort("timestamp", 1):
+                            item = {"timestamp": items['timestamp'], 'info': items['info'][switcher[coin]],
+                                    'market': items['market']}
+                            tickers.append(item)
+                    return tickers
+                else:
+                    """ Imprime as informações sobre a criptomoeda selecionada de todos os mercados"""
+                    for item in col:
+                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        for items in cursor.find({}).sort("timestamp", 1):
+                            item = {"timestamp": items['timestamp'], 'info': items['info'][switcher[coin]],
+                                    'market': items['market']}
+                            print(json.dumps(item, indent=4, sort_keys=True))
         else:
             if coin is None:
-
-                "Retornar todas as informações sobre todas as cryptomoedas do mercado selecionado"
-
+                "Retornar todas as informações sobre todas as criptomoedas do mercado selecionado"
                 cursor = self.session['SmartCoinDB'].get_collection(market)
-
-                for items in cursor.find({}):
-                    print(items)
-
+                if materialized_mode is True:
+                    "Retornar todas as informações sobre todas as criptomoedas do mercado selecionado em uma lista"
+                    tickers = []
+                    for items in cursor.find({}).sort("timestamp", 1):
+                        item = {"timestamp": items['timestamp'], 'info': items['info'], 'market': items['market']}
+                        tickers.append(item)
+                    return tickers
+                else:
+                    "Imprime todas as informações sobre todas as criptomoedas do mercado selecionado"
+                    for items in cursor.find({}).sort("timestamp", 1):
+                        item = {"timestamp": items['timestamp'], 'info': items['info'], 'market': items['market']}
+                        print(json.dumps(item, indent=4, sort_keys=True))
             else:
-                """ Retornar todas as informações sobre a cryptomoeda selecionada do mercado selecionado"""
-
-                cursor = self.session['SmartCoinDB'].get_collection(market)
-
-                switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
-
-                for items in cursor.find({}):
-                    """Numpy Array Format ->  ['high', 'low', 'vol', 'last', 'buy', 'sell', 'date'] """
-                    # print(list(items['info'][switcher[coin]]['ticker']))
-                    print(items['info'][switcher[coin]])
+                if materialized_mode is True:
+                    """ Retornar as informações sobre a criptomoeda selecionada do mercado selecionado em uma lista"""
+                    cursor = self.session['SmartCoinDB'].get_collection(market)
+                    switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
+                    tickers = []
+                    for items in cursor.find({}).sort('timestamp', 1):
+                        item = {"timestamp": items['timestamp'], 'info': items['info'][switcher[coin]],
+                                'market': items['market']}
+                        tickers.append(item)
+                    return tickers
+                else:
+                    """ Imprime as informações sobre a criptomoeda selecionada do mercado selecionado em uma lista"""
+                    cursor = self.session['SmartCoinDB'].get_collection(market)
+                    switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
+                    for items in cursor.find({}).sort('timestamp', 1):
+                        item = {"timestamp": items['timestamp'], 'info': items['info'][switcher[coin]],
+                                'market': items['market']}
+                        print(json.dumps(item, indent=4, sort_keys=True))
 
     def limpar_collections(self, collection):
         """Dropa todo conteúdo referente a uma collection"""
