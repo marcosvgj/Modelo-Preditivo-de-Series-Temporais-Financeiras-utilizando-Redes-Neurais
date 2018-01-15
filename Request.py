@@ -40,7 +40,7 @@ class RequestMercadoBitcoin(Request):
 
         except requests.exceptions.ConnectionError as error:
 
-            print("<Erro na requisição dos dados: %s" % error)
+            print("<Erro na requisição dos dados> : %s" % error)
 
         except requests.exceptions.Timeout as error:
 
@@ -48,7 +48,6 @@ class RequestMercadoBitcoin(Request):
 
 
 class RequestNegocieCoins(Request):
-
     market = "Negocie Coins"
 
     def __init__(self, coin):
@@ -90,8 +89,7 @@ class Coletor:
         tickers = []
 
         for item in iterator:
-
-            Thread(target=item.request_data()).start()
+            item.request_data()
             tickers.append(item.data)
             self.data.update({"timestamp": current_time, "info": tickers, "market": item.market})
 
@@ -99,12 +97,11 @@ class Coletor:
 
 
 class Scraping:
-
     def __init__(self):
         """ Coleta automatizada dos dados """
         print("Starting Scraping job ...")
 
-    def run_gear(self, job):
+    def run(self, job):
         schedule.every(1).minute.do(job)
         while True:
             schedule.run_pending()
@@ -112,21 +109,18 @@ class Scraping:
 
 
 def job_for_all_markets(db_connection):
-
     """ Facade
         Ressalva: Inicializar ambiente multi-thread para coleta em diferentes mercados"""
 
     market_requests = Request.__subclasses__()
 
     for item in market_requests:
-
         requisition = Coletor(item)
         requisition.requisitar_dados()
         db_connection.armazenar_dados(requisition)
 
 
 def job_for_only_market(db_connection, market_request):
-
     """ Facade """
 
     requisition = Coletor(market_request)
@@ -140,4 +134,8 @@ if __name__ == '__main__':
     db_conn.iniciar_sessao()
 
     bot = Scraping()
-    bot.run_gear(partial(job_for_all_markets, db_conn))
+    bot.run(partial(job_for_all_markets, db_conn))
+
+
+
+
