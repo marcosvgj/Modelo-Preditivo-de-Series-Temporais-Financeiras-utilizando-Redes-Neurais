@@ -5,6 +5,12 @@
 especialmente no Mercado de criptomoedas ou moedas virtuais, no qual, utiliza-se modelos preditivos como uma das 
 atividades essênciais e diferenciais do sistema de trading, implementados utilizando Redes Neurais Artificiais.
 
+Data  | Status
+------------- | -------------
+15/01/2018 | Inicio da coleta de dados
+
+
+
 # Table of contents
 * Introdução
 * Requerimentos 
