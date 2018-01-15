@@ -1,7 +1,9 @@
 
 ## Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais
 
-* Projeto que tem como objetivo a construção de um sistema capaz de realizar transações no Mercado Financeiro, especialmente no Mercado Bit Coin que, utiliza do Modelo Preditivo de Séries Temporais Financeiras utilizando Redes Neurais Artificiais.
+* Projeto que tem como objetivo a construção de um sistema capaz de realizar transações no Mercado Financeiro, 
+especialmente no Mercado de criptomoedas ou moedas virtuais, no qual, utiliza-se modelos preditivos como uma das 
+atividades essênciais e diferenciais do sistema de trading, implementados utilizando Redes Neurais Artificiais.
 
 # Table of contents
 * Introdução
@@ -13,8 +15,9 @@
 
 ## Implementação do Scraping(): 
 * Na etapa atual, é realizado uma classe Scraping no qual faz uso dos dados real-time de diversos brokers, 
-que fornecem serviços para compra e venda de ativos financeiros e moedas virtuais como o Bitcoin. 
-O objetivo do Scraping() é coletar os dados minuto à minuto das corretoras para que se possa realizar o que é denominado na economia de arbitragem.  
+que fornecem serviços para compra e venda de ativos financeiros e moedas virtuais como o Bitcoin.
+O objetivo do Scraping() é coletar os dados minuto à minuto das corretoras para que se possa realizar o que é
+denominado na economia de arbitragem.  
 
 Referências: https://pt.wikipedia.org/wiki/Arbitragem_(economia)
 
