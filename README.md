@@ -5,11 +5,19 @@
 especialmente no Mercado de criptomoedas ou moedas virtuais, no qual, utiliza-se modelos preditivos como uma das 
 atividades essênciais e diferenciais do sistema de trading, implementados utilizando Redes Neurais Artificiais.
 
-Data  | Status
+Data  | Status | Versão
+------------- | ------------- |
+08/01/2018 | Teste do protótipo Scraping() para coleta de dados | Scraping 1.0
+10/01/2018 | Melhoria do job Scraping() para coleta de dados | Scraping 1.1 
+15/01/2018 | Inicio da coleta de dados através da primeira versão do Scraping | Scraping 1.1
+
+*Observações* 
+
+Data  | Versão | Comentário
 ------------- | -------------
-15/01/2018 | Inicio da coleta de dados
+08/01/2018 | Scraping 1.1 | Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
 
-
+* * *
 
 # Table of contents
 * Introdução
