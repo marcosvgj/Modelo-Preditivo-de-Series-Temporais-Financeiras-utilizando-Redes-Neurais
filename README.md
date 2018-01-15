@@ -11,7 +11,7 @@ Data  | Status | Versão
 10/01/2018 | Melhoria do job Scraping() para coleta de dados | Scraping 1.1 
 15/01/2018 | Inicio da coleta de dados através da primeira versão do Scraping | Scraping 1.1
 
-*Observações* 
+# Observações
 
 Data  | Versão 
 ------------- | -------------
