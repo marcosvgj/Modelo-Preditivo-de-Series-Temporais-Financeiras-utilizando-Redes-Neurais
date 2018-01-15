@@ -40,7 +40,7 @@ class RequestMercadoBitcoin(Request):
 
         except requests.exceptions.ConnectionError as error:
 
-            print("<Erro na requisição dos dados: %s" % error)
+            print("<Erro na requisição dos dados> : %s" % error)
 
         except requests.exceptions.Timeout as error:
 
@@ -101,7 +101,7 @@ class Scraping:
         """ Coleta automatizada dos dados """
         print("Starting Scraping job ...")
 
-    def run_gear(self, job):
+    def run(self, job):
         schedule.every(1).minute.do(job)
         while True:
             schedule.run_pending()
@@ -134,4 +134,8 @@ if __name__ == '__main__':
     db_conn.iniciar_sessao()
 
     bot = Scraping()
-    bot.run_gear(partial(job_for_all_markets, db_conn))
+    bot.run(partial(job_for_all_markets, db_conn))
+
+
+
+
