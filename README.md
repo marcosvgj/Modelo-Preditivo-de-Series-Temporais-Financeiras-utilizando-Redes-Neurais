@@ -10,6 +10,7 @@ Data  | Status | Versão
 08/01/2018 | Teste do protótipo Scraping() para coleta de dados | Scraping 1.0
 10/01/2018 | Melhoria do job Scraping() para coleta de dados | Scraping 1.1 
 15/01/2018 | Inicio da coleta de dados através da primeira versão do Scraping | Scraping 1.1
+16/01/2018 | Início da implementação das funções de Pré-processamento de dados
 
 # Observações
 
