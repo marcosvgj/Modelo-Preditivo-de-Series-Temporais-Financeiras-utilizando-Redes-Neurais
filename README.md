@@ -25,7 +25,7 @@ Versão necessita de um mecanismo multi-thread para captação de dados de difer
 
 # Table of contents
 * Introdução
-* [Parser](#parser)
+* [Parser](# Parser)
 * Requerimentos 
 * Módulos
 * Configuração 
@@ -54,7 +54,7 @@ Referências: https://pt.wikipedia.org/wiki/Arbitragem_(economia)
 * Abc ( Abstract Base Classes )
 * Functools
 
-<a id="parser">## Implementação do Parser():</a>
+# Parser
 
 ## Módulos necessários
 
