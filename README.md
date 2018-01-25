@@ -18,16 +18,14 @@ Data  | Status | Versão
 Data  | Versão 
 ------------- | -------------
 15/01/2018 | Scraping 1.1 
-25/01/2018 | Scraping 1.1
 
 Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
-Scraping pode ser implementado um ambiente multi-thread
 
 * * * 
 
 # Table of contents
 * Introdução
-- [Parser](#parser)
+* [Parser](#parser)
 * Requerimentos 
 * Módulos
 * Configuração 
@@ -56,12 +54,11 @@ Referências: https://pt.wikipedia.org/wiki/Arbitragem_(economia)
 * Abc ( Abstract Base Classes )
 * Functools
 
-## Implementação do Parser():
+<a id="parser">## Implementação do Parser():</a>
 
 ## Módulos necessários
-<a id="parser">asa</a>
 
- - import DatabaseConnection
+- import DatabaseConnection
 - import numpy as np
 - import pandas as pd
 - import json 
