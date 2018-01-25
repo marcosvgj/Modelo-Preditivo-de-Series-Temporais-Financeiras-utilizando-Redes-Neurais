@@ -11,18 +11,21 @@ Data  | Status | Versão
 10/01/2018 | Melhoria do job Scraping() para coleta de dados | Scraping 1.1 
 15/01/2018 | Inicio da coleta de dados através da primeira versão do Scraping | Scraping 1.1
 16/01/2018 | Início da implementação das funções de Pré-processamento de dados
+25/01/2018 | Início da construção da classe Parser | Parser 1.0
 
 # Observações
 
 Data  | Versão 
 ------------- | -------------
 15/01/2018 | Scraping 1.1 
+25/01/2018 | Scraping pode ser implementado um ambiente multi-thread 
 
 Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
 * * * 
 
 # Table of contents
 * Introdução
+- [Parser](#parser)
 * Requerimentos 
 * Módulos
 * Configuração 
@@ -50,3 +53,20 @@ Referências: https://pt.wikipedia.org/wiki/Arbitragem_(economia)
 * time 
 * Abc ( Abstract Base Classes )
 * Functools
+
+## Implementação do Parser():
+
+## Módulos necessários
+<a id="parser"></a>
+
+ - import DatabaseConnection
+- import numpy as np
+- import pandas as pd
+- import json 
+- from pandas import DataFrame
+- from matplotlib import pyplot
+- from keras.layers import LSTM
+- from pymongo import errors, MongoClient
+- import json
+
+- %matplotlib inline  
