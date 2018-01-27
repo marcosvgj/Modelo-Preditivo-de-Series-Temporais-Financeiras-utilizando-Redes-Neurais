@@ -18,7 +18,12 @@ Data  | Status | Versão
 Data  | Versão 
 ------------- | -------------
 15/01/2018 | Scraping 1.1 
+27/01/2018 | Parser 1.1
 
+
+
+
+Necessário tratar dados no qual o tipo primitivo se encontra como texto (*string*)
 Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
 
 * * * 
