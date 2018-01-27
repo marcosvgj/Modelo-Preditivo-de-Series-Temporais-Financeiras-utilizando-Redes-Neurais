@@ -23,8 +23,7 @@ Data  | Versão
 
 
 
-Necessário tratar dados no qual o tipo primitivo se encontra como texto (*string*)
-<p></p>
+Necessário tratar dados no qual o tipo primitivo se encontra como texto (*string*)  
 Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
 
 * * * 
