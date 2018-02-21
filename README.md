@@ -12,6 +12,8 @@ Data  | Status | Versão
 15/01/2018 | Inicio da coleta de dados através da primeira versão do Scraping | Scraping 1.1
 16/01/2018 | Início da implementação das funções de Pré-processamento de dados
 25/01/2018 | Início da construção da classe Parser | Parser 1.0
+21/02/2018 | Brainstorm de quais estratégias de investimento podem ser adotadas junto ao ambiente de Arbitragem*
+
 
 # Observações
 
@@ -25,6 +27,10 @@ Data  | Versão
 
 Necessário tratar dados no qual o tipo primitivo se encontra como texto (*string*)  
 Versão necessita de um mecanismo multi-thread para captação de dados de diferentes fontes
+
+As estratégias de investimentos variam entre duas opções (swing trade - utiliza tanto os gráfico quanto as previsões das ações 
+em âmbito diário) e (scalper - que utiliza dos dados a cada minuto). 
+
 
 * * * 
 
