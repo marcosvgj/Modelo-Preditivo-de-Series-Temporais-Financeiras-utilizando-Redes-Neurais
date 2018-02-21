@@ -136,6 +136,3 @@ if __name__ == '__main__':
     bot = Scraping()
     bot.run(partial(job_for_all_markets, db_conn))
 
-
-
-
