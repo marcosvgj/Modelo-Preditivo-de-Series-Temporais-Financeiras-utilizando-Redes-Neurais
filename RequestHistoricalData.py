@@ -64,6 +64,23 @@ class ColetorHistorico:
                 item.request_data()
                 print(item.data)
 
+    @staticmethod
+    def get_historico_batch():
+        coin_first_date = [{'BTC': date(2013, 6, 12)}, {'LTC': date(2013, 8, 23)}, {'BCH': date(2017, 8, 21)}]
+
+        for item in coin_first_date:
+            dinicio = list(item.values())[0]
+            dfim = date.today() - timedelta(days=1)
+            periodo = dfim - dinicio
+
+            for i in range(periodo.days + 1):
+                date_parsing = str(dinicio + timedelta(days=i))
+                date_request = date_parsing.replace("-", '/')
+
+                item_request = MercadoBitcoin(coin=list(item.keys())[0], date_request=date_request)
+                item_request.request_data()
+                print(item_request.data)
+
 
 coletor = ColetorHistorico(MercadoBitcoin)
-coletor.get_historico()
+coletor.get_historico_batch()

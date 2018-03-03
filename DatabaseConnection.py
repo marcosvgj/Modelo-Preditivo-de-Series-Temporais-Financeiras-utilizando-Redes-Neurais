@@ -11,23 +11,25 @@ class MongoDB:
         self.session = MongoClient()
         # Default Host
         if host is None:
-            self.host = 'localhost'
+            self.host = 'ds155268.mlab.com'
         else:
             self.host = host
         # Default Port
         if port is None:
-            self.port = 27017
+            self.port = 55268
         else:
             self.port = port
 
     def iniciar_sessao(self):
-        self.session = MongoClient(self.host, self.port)
+        self.session = MongoClient(self.host,self.port)
+        db = self.session['smartbot_database_tcc']
+        db.authenticate('marcosvgj', 'a597179b')
 
     def fechar_sessao(self):
         self.session.close()
 
     def armazenar_dados(self, coletor):
-        db = self.session['SmartCoinDB'].get_collection(coletor.request_type.market)
+        db = self.session['smartbot_database_tcc'].get_collection(coletor.request_type.market)
         try:
             db.insert_one(coletor.data)
             print("Data was successfully inserted in the follow Colletion: %s " % coletor.request_type.market)
@@ -37,12 +39,12 @@ class MongoDB:
     def consultar(self, market=None, coin=None, materialized_mode=False):
         if market is None:
             if coin is None:
-                col = self.session['SmartCoinDB'].collection_names()
+                col = self.session['smartbot_database_tcc'].collection_names()
                 if materialized_mode is True:
                     """ Retornar todos os dados de todas as coleções em uma lista"""
                     tickers = []
                     for item in col:
-                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        cursor = self.session['smartbot_database_tcc'].get_collection(item)
                         for items in cursor.find({}).sort('timestamp', 1):
                             item = {"timestamp": items['timestamp'], 'info': items['info'], 'market': items['market']}
                             tickers.append(item)
@@ -50,19 +52,19 @@ class MongoDB:
                 else:
                     """ Imprime todos os dados de todas as coleções"""
                     for item in col:
-                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        cursor = self.session['smartbot_database_tcc'].get_collection(item)
                         for items in cursor.find({}).sort('timestamp', 1):
                             item = {"timestamp": items['timestamp'], 'info': items['info'], 'market': items['market']}
                             print(json.dumps(item, indent=4, sort_keys=True))
             else:
                 """ Retornar as informações sobre a criptomoeda selecionada de todos os mercados"""
-                col = self.session['SmartCoinDB'].collection_names()
+                col = self.session['smartbot_database_tcc'].collection_names()
                 switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
                 if materialized_mode is True:
                     """ Retornar as informações sobre a criptomoeda selecionada de todos os mercados em uma lista"""
                     tickers = []
                     for item in col:
-                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        cursor = self.session['smartbot_database_tcc'].get_collection(item)
                         for items in cursor.find({}).sort("timestamp", 1):
                             item = {"timestamp": items['timestamp'], 'info': items['info'][switcher[coin]],
                                     'market': items['market']}
@@ -71,7 +73,7 @@ class MongoDB:
                 else:
                     """ Imprime as informações sobre a criptomoeda selecionada de todos os mercados"""
                     for item in col:
-                        cursor = self.session['SmartCoinDB'].get_collection(item)
+                        cursor = self.session['smartbot_database_tcc'].get_collection(item)
                         for items in cursor.find({}).sort("timestamp", 1):
                             item = {"timestamp": items['timestamp'], 'info': items['info'][switcher[coin]],
                                     'market': items['market']}
@@ -79,7 +81,7 @@ class MongoDB:
         else:
             if coin is None:
                 "Retornar todas as informações sobre todas as criptomoedas do mercado selecionado"
-                cursor = self.session['SmartCoinDB'].get_collection(market)
+                cursor = self.session['smartbot_database_tcc'].get_collection(market)
                 if materialized_mode is True:
                     "Retornar todas as informações sobre todas as criptomoedas do mercado selecionado em uma lista"
                     tickers = []
@@ -95,7 +97,7 @@ class MongoDB:
             else:
                 if materialized_mode is True:
                     """ Retornar as informações sobre a criptomoeda selecionada do mercado selecionado em uma lista"""
-                    cursor = self.session['SmartCoinDB'].get_collection(market)
+                    cursor = self.session['smartbot_database_tcc'].get_collection(market)
                     switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
                     tickers = []
                     for items in cursor.find({}).sort('timestamp', 1):
@@ -105,7 +107,7 @@ class MongoDB:
                     return tickers
                 else:
                     """ Imprime as informações sobre a criptomoeda selecionada do mercado selecionado em uma lista"""
-                    cursor = self.session['SmartCoinDB'].get_collection(market)
+                    cursor = self.session['smartbot_database_tcc'].get_collection(market)
                     switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
                     for items in cursor.find({}).sort('timestamp', 1):
                         item = {"timestamp": items['timestamp'], 'info': items['info'][switcher[coin]],
@@ -114,4 +116,4 @@ class MongoDB:
 
     def limpar_collections(self, collection):
         """Dropa todo conteúdo referente a uma collection"""
-        self.session['SmartCoinDB'].get_collection(collection).drop()
+        self.session['smartbot_database_tcc'].get_collection(collection).drop()
