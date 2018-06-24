@@ -4,6 +4,7 @@ from NNOptimization import NNOptimization
 import Preprocessor
 from pandas import read_csv
 from NNTypes import Model
+import json
 import time
 import os
 
@@ -56,7 +57,7 @@ def main():
         new_model = item()
         optimization = NNOptimization(data, new_model.topology)
         optimization.start_search()
-        print("Best Configuration: " + optimization.get_configuration())
+        print("Best Configuration: " + json.dumps(optimization.get_configuration(), indent=4, sort_keys=True))
 
         new_path = output_path + item.__name__
 
