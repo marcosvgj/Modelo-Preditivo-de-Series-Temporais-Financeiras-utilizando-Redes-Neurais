@@ -1,5 +1,5 @@
 from NNOptimization import NNOptimization
-from NNTypes import NNTypes
+import NNTypes
 from Preprocessor import PreProcessor
 from pandas import read_csv
 
@@ -21,14 +21,14 @@ if __name__ == "__main__":
 
     data = pre_processing.get_data()
 
-    neural_network = NNTypes()
-    nn_types = [NNTypes.mlp_type_1, NNTypes.mlp_type_2,
-                NNTypes.mlp_type_3, NNTypes.lstm_type_1,
-                NNTypes.lstm_type_2, NNTypes.lstm_type_3]
+    neural_network = NNTypes
 
-    for j in nn_types:
-        optimization = NNOptimization(data, j)
-        optimization.start_search()
-        print(j.__name__ + ":" + optimization.get_configuration())
-        optimization.save_score_excel(str(j.__name__))
+    nntypes = [NNTypes.lstm_type_1, NNTypes.lstm_type_2,
+               NNTypes.lstm_type_3, NNTypes.mlp_type_1,
+               NNTypes.mlp_type_2, NNTypes.mlp_type_3]
+
+    optimization = NNOptimization(data, NNTypes.lstm_type_1)
+    optimization.start_search()
+    optimization.save_score_excel('C:/Users/Marcos/Desktop/Notebooks/TCC/Resultados/teste')
+
 

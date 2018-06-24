@@ -1,112 +1,106 @@
-from DatabaseConnection import MongoDB
-import pandas as pd
 from pandas import DataFrame
 from pandas import concat
+import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
-# from sklearn.model_selection import GridSearchCV
 
-def parser(data, coin, formatt=None):
-    """ Criação de um Pandas Dataframe com as informações contidas no banco não relacional. O método recebe como
-    parâmetro uma coleção de objetos JSON e os realoca construindo um Pandas DataFrame para o tipo de moeda
-    selecionado. """
-    switcher = {'BTC': 0, 'LTC': 1, 'BCH': 2}
-    tables = {}
-    for item in switcher:
-        tables[item] = []
-        for cursor in data:
-            cursor_dict = cursor['info'][switcher[item]]['ticker']
-            itz = pd.Series(cursor_dict, index=cursor_dict.keys())
-            tables[item].append(itz)
-    if formatt is None:
-        return np.array(tables[coin])
-    elif formatt == 'pandas':
-        return pd.DataFrame(tables[coin])
-    elif formatt == 'numpy':
-        return np.array(tables[coin])
+class PreProcessor:
+    def __init__(self, data):
+        self.dataset = {}
+        self.data = data
+        self.scaler = None
 
+    def normalization(self):
+        columns = self.data.columns
+        self.scaler = MinMaxScaler(feature_range=(-1, 1))
+        self.data = self.scaler.fit_transform(self.data)
+        self.data = pd.DataFrame(self.data, columns=columns)
 
-class Preprocessor:
-    def __init__(self):
-        print("Start Pre-processor .. ")
+    def split_train_test(self, percentual_train=0.90):
+        tam_treino = int(len(self.data) * percentual_train)
+        self.dataset['train'], self.dataset['test'] = self.data[0:tam_treino], self.data[tam_treino:len(self.data)]
 
-    def get_data(self, mkt=None, coin=None):
-        """ Recupera os dados do mercado selecionado em formato JSON"""
-        db_conn = MongoDB()
-        data = db_conn.consultar(materialized_mode=True, market=mkt, coin=coin)
-        return data
+    def sliding_window(self, x_in=1, y_out=1, drop_nan=True):
 
-    def sliding_window_v3(self, data, x_in=1, y_out=1, dropnan=True):
-
-        if type(data) is list:
-            n_vars = 1
-        else:
-            n_vars = data.shape[1]
-
-        df = DataFrame(data)
+        df = DataFrame(self.data)
         cols, names = list(), list()
 
-        # Sequencia corrente de entrada
         for i in range(x_in, 0, -1):
             aux_1 = df.shift(-i)
-            cols.append(aux_1['last'])
-            names += ['last (t)']
 
-        # Sequencia de saída
+            cols.append(aux_1)
+            for j in aux_1.keys():
+                names += [j + ' (t)']
 
         for i in range(1, y_out + 1):
             aux = df.shift(-i)
-            cols.append(aux['last'])
+            cols.append(aux)
             # cols.append(df.shift(-i))
             if i == 1:
-                names += ['last (t+1)']
-            else:
-                names += ['last (t+%d)' % i]
+                for j in aux.keys():
+                    names += [j + ' (t+1)']
 
-        # Junção dos dados coletados
+            else:
+                for j in aux.keys():
+                    names += [j + ' (t+%d)' % i]
 
         agg = concat(cols, axis=1)
         agg.columns = names
 
-        # Remove registros com itens nulos
-
-        if dropnan:
+        if drop_nan:
             agg.dropna(inplace=True)
-        return agg
+        self.data = agg
 
-    def split_train_test(self, data, percentual_train=0.70):
-        tam_treino = int(len(data) * percentual_train)
-        treino, teste = data[0:tam_treino], data[tam_treino:len(data)]
-        return treino, teste
+    def split_in_out(self, slide_window_in, col):
+        """slide_window_in refere-se a quantidade de pontos da série utilizado como entrada.
+        No caso o modelo atual trabalha com 17 variáveis"""
+        index = 1
 
-    def split_in_out_v2(self, data):
-        x = data.loc[:, :'vol (t)']
-        y = data.loc[:, 'last (t+1)':]
+        for j in ([self.dataset['train'], self.dataset['test']]):
 
-        return x, y
+            x = j.iloc[:, :slide_window_in * col]
+            y_list = []
+            for i in j.keys():
+                if i[:11] == 'closing (t+':
+                    y_list.append(i)
+            y = j[y_list]
 
-    def to_array(self, data):
-        info = np.array(data)
-        # Alterar o shape da lista `info.shape`
-        info = np.reshape(info, (info.shape[0], 1, info.shape[1]))
-        return info
+            if index == 1:
+                self.dataset['train_x'] = DataFrame(x)
+                self.dataset['train_y'] = y
+            else:
+                self.dataset['test_x'] = DataFrame(x)
+                self.dataset['test_y'] = y
 
-    def normalizacao(self, data):
-        scaler = MinMaxScaler(feature_range=(-1, 1))
-        data_norm = scaler.fit_transform(data)
+            index += 1
 
-        return data_norm, scaler
+    def set_numpy_format(self):
 
-    def reshape_data(self, data):
-        return np.reshape(data, (data.shape[0], 1, data.shape[1]))
+        def reshape_data(data):
+            return np.reshape(data, (data.shape[0], 1, data.shape[1]))
 
-    def escala_inversa(self, data, new_data):
+        for k in ('train', 'test'):
+            self.dataset[k + '_x'] = np.array(self.dataset[k + '_x'])
+            self.dataset[k + '_x'] = reshape_data(self.dataset[k + '_x'])
 
-        scaler = MinMaxScaler(feature_range=(-1, 1))
-        scaler.fit_transform(data)
-        unormalized = scaler.inverse_transform(new_data)
+            self.dataset[k + '_y'] = np.array(self.dataset[k + '_y'])
+            self.dataset[k + '_y'] = reshape_data(self.dataset[k + '_y'])
 
-        return unormalized
+    def get_data(self):
+        return self.dataset
 
+    def get_train_x(self):
+        return self.dataset['train_x']
 
+    def get_train_y(self):
+        return self.dataset['train_y']
+
+    def get_test_x(self):
+        return self.dataset['test_x']
+
+    def get_test_y(self):
+        return self.dataset['test_y']
+
+    def get_scaler(self):
+        return self.scaler
