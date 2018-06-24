@@ -4,13 +4,14 @@ from keras.layers.core import Dense, Dropout
 from keras.models import Sequential
 
 
+# 24-04-2018
+
 def custom_tanh(x):
     return 1.7159 * K.tanh((2 / 3) * x)
 
 
 def mean_squared_error(y_true, y_pred):
     return K.mean(K.square(y_pred - y_true), axis=-1)
-
 
 
 def mlp_type_1(neurons=64, dropout=0.4):
