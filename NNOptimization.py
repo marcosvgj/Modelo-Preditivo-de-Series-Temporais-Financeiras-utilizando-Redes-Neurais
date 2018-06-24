@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import pandas as pd
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import GridSearchCV
@@ -23,7 +25,7 @@ class NNOptimization:
     def start_search(self):
         grid_search = GridSearchCV(estimator=self.KERAS_model
                                    , param_grid=self.search_space
-                                   , n_jobs=2
+                                   , n_jobs=1
                                    , scoring=self.metric)
         grid_search.fit(self.data['train_x'], self.data['train_y'])
 
