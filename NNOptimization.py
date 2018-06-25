@@ -6,10 +6,11 @@ from sklearn.model_selection import GridSearchCV
 from keras.wrappers.scikit_learn import KerasRegressor
 from numpy import square
 from numpy import subtract
+from numpy import sqrt
 
 
-def mean_squared_error(y, y_pred):
-    return square(subtract(y, y_pred)).mean()
+def root_mean_squared_error(y, y_pred):
+    return sqrt(square(subtract(y, y_pred)).mean())
 
 
 class NNOptimization:
@@ -20,7 +21,7 @@ class NNOptimization:
         self.scores = None
         self.configuration = None
         self.KERAS_model = KerasRegressor(build_fn=model, verbose=0)
-        self.metric = make_scorer(mean_squared_error, greater_is_better=False)
+        self.metric = make_scorer(root_mean_squared_error, greater_is_better=False)
 
     def start_search(self):
         grid_search = GridSearchCV(estimator=self.KERAS_model
