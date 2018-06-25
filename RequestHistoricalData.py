@@ -64,9 +64,9 @@ class ColetorHistorico:
             date_request = date_parsing.replace("-", '/')
 
             iterator = [self.request_type(item, date_request) for item in self.cryptocurrencies]
+
             for item in iterator:
                 item.request_data()
-
                 print(item.data)
 
 
@@ -117,4 +117,4 @@ if __name__ == '__main__':
 
     coletor_historico = Scraping(db_connection)
     coletor_historico.get_historico_batch()
-    coletor_historico.armazenar_dados()
+    #coletor_historico.armazenar_dados()
