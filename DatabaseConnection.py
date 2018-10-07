@@ -12,7 +12,7 @@ class MongoDB:
         self.host = 'ds155268.mlab.com'
         self.port = 55268
         self.user = 'marcosvgj'
-        self.user_password = 'a597179b'
+        self.user_password = '********'
         self.collection = 'smartbot_database_tcc'
 
     def iniciar_sessao(self):
