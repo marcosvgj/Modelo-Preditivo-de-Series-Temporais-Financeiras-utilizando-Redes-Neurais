@@ -18,7 +18,7 @@ def armazenar_dados(data):
     host = 'ds155268.mlab.com'
     port = 55268
     user = 'marcosvgj'
-    user_password = 'a597179b'
+    user_password = '*********'
     collection = 'smartbot_database_tcc'
 
     session = MongoClient(host, port)
